@@ -10,8 +10,8 @@
 /* Se o seu processador tiver pouco cache (muito lento), talvez seja prático
  * diminuir esse número. Use uma pot. de 2
  */
+// #define N 2048
 #define N 2048
-
 int main()
 {
     double *restrict A = aligned_alloc(8, N*N*sizeof(*A));
