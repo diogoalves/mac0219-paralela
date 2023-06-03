@@ -1,0 +1,8 @@
+*/*.o
+*/main
+*/main-experiment
+*/main*
+!*/*.c
+!*/*.h
+*/codigo_gerado-matrix.codigo_gerado
+*/db.sqlite3
