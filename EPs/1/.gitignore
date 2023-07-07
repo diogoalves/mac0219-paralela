@@ -1,0 +1,4 @@
+*.o
+check
+time_test
+grid_gen
