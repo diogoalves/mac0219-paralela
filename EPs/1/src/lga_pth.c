@@ -16,7 +16,7 @@ static byte get_next_cell(int i, int j, byte *grid_in, int grid_size) {
         if (inbounds(n_i, n_j, grid_size)) {
             if (grid_in[ind2d(n_i,n_j)] == WALL) {
                 next_cell |= from_wall_collision(i, j, grid_in, grid_size, dir);
-            } 
+            }
             else if (grid_in[ind2d(n_i, n_j)] & rev_dir_mask) {
                 next_cell |= rev_dir_mask;
             }
@@ -26,25 +26,12 @@ static byte get_next_cell(int i, int j, byte *grid_in, int grid_size) {
     return check_particles_collision(next_cell);
 }
 
-static void update(byte *grid_in, byte *grid_out, int grid_size, int num_threads) {
-    pthread_t threads[num_threads];
-    int error_code;
-    long t;
-
-    for(t = 0; t < num_threads; t++){
-        printf("In main: creating thread %ld\n", t);
-        error_code = pthread_create(&threads[t], NULL,
-                                    print_hello, (void *) t);
-        if (error_code){
-            printf("ERROR; return code from pthread_create() is %d\n", error_code);
-            exit(-1);
-    };
-
+static void update(byte *grid_in, byte *grid_out, int grid_size) {
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            if (grid_in[ind2d(i,j)] == WALL) 
+            if (grid_in[ind2d(i,j)] == WALL)
                 grid_out[ind2d(i,j)] = WALL;
-            else 
+            else
                 grid_out[ind2d(i,j)] = get_next_cell(i, j, grid_in, grid_size);
         }
     }
@@ -52,7 +39,7 @@ static void update(byte *grid_in, byte *grid_out, int grid_size, int num_threads
 
 void simulate_pth(byte *grid_1, byte *grid_2, int grid_size, int num_threads) {
     for (int i = 0; i < ITERATIONS/2; i++) {
-        update(grid_1, grid_2, grid_size, num_threads);
-        update(grid_2, grid_1, grid_size, num_threads);
+        update(grid_1, grid_2, grid_size);
+        update(grid_2, grid_1, grid_size);
     }
 }
