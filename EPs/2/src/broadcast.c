@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <mpi.h>
+#include <unistd.h>
 
 #define NOT_READ -1
 #define MAX_VAL 1000
@@ -85,22 +86,23 @@ int custom_bcast(
     int root,
     MPI_Comm comm ) {
       int tag = 0;
-      int dest = 1;
-      int ret;
-
       int world_rank;
       MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
+      int ret = MPI_ERR_UNKNOWN;
       if (world_rank == root) {
         int num_procs;
         MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
         for (int r = 0; r < num_procs; r++) {
           if (r != root) {
-            MPI_Send(buffer, count, datatype, r, tag, comm);
+            ret = MPI_Send(buffer, count, datatype, r, tag, comm);
+            if( ret != MPI_SUCCESS) {
+                return ret;
+            }
           }
         }
       } else {
-        MPI_Recv(buffer, count, datatype, root, tag, comm, ret);
+        ret = MPI_Recv(buffer, count, datatype, root, tag, comm, NULL);
       }
     return ret;
 }
@@ -163,6 +165,7 @@ int main(int argc, char *argv[]) {
                 printf("%d ", buf[i]);
 
             printf("\n\n");
+            sleep(1);
         }
 
         // Para garantir a ordem de impressao
